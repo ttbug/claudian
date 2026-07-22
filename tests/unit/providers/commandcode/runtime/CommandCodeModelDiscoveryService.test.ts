@@ -24,7 +24,7 @@ describe('CommandCodeModelDiscoveryService', () => {
     }));
     const plugin = {
       app: { vault: { adapter: { basePath: '/vault' } } },
-      getResolvedProviderCliPath: jest.fn(() => '/opt/homebrew/bin/cmd'),
+      getResolvedProviderCliPath: jest.fn(async () => '/opt/homebrew/bin/cmd'),
       settings: { providerConfigs: { commandcode: { enabled: true } } },
     } as any;
     const service = new CommandCodeModelDiscoveryService(plugin, run);

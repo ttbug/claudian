@@ -4,6 +4,19 @@ import type { Conversation } from '../../../core/types';
 import { decodeCommandCodeModelId, encodeCommandCodeModelId } from '../models';
 import { getCommandCodeProviderSettings, updateCommandCodeProviderSettings } from '../settings';
 
+function invalidateCommandCodeConversationSessions(conversations: Conversation[]): Conversation[] {
+  return conversations.filter((conversation) => {
+    if (conversation.providerId !== 'commandcode') return false;
+    const state = conversation.providerState;
+    const hasState = !!conversation.sessionId
+      || !!(state && typeof state === 'object' && !Array.isArray(state) && state.sessionId);
+    if (!hasState) return false;
+    conversation.sessionId = null;
+    conversation.providerState = undefined;
+    return true;
+  });
+}
+
 export const commandCodeSettingsReconciler: ProviderSettingsReconciler = {
   handleEnvironmentChange(settings): boolean {
     const current = getCommandCodeProviderSettings(settings);
@@ -11,6 +24,8 @@ export const commandCodeSettingsReconciler: ProviderSettingsReconciler = {
     updateCommandCodeProviderSettings(settings, { discoveredModels: [] });
     return true;
   },
+
+  invalidateConversationSessions: invalidateCommandCodeConversationSessions,
 
   reconcileModelWithEnvironment(settings, conversations): {
     changed: boolean;
@@ -23,16 +38,7 @@ export const commandCodeSettingsReconciler: ProviderSettingsReconciler = {
     const savedHash = getCommandCodeProviderSettings(settings).environmentHash;
     if (currentHash === savedHash) return { changed: false, invalidatedConversations: [] };
 
-    const invalidatedConversations = conversations.filter((conversation) => {
-      if (conversation.providerId !== 'commandcode') return false;
-      const state = conversation.providerState;
-      const hasState = !!conversation.sessionId
-        || !!(state && typeof state === 'object' && !Array.isArray(state) && state.sessionId);
-      if (!hasState) return false;
-      conversation.sessionId = null;
-      conversation.providerState = undefined;
-      return true;
-    });
+    const invalidatedConversations = invalidateCommandCodeConversationSessions(conversations);
     updateCommandCodeProviderSettings(settings, { environmentHash: currentHash });
     return { changed: true, invalidatedConversations };
   },

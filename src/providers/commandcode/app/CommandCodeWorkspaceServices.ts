@@ -56,9 +56,6 @@ export async function createCommandCodeWorkspaceServices(
     },
   };
 
-  if (getCommandCodeProviderSettings(plugin.settings).enabled) {
-    await services.refreshModelCatalog?.();
-  }
   return services;
 }
 

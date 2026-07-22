@@ -13,7 +13,7 @@ export class CommandCodeAuxQueryRunner implements AuxQueryRunner {
   constructor(private readonly plugin: ProviderHost) {}
 
   async query(config: AuxQueryConfig, prompt: string): Promise<string> {
-    const command = this.plugin.getResolvedProviderCliPath('commandcode');
+    const command = await this.plugin.getResolvedProviderCliPath('commandcode');
     if (!command) throw new Error('Command Code CLI was not found.');
 
     const cwd = getVaultPath(this.plugin.app) ?? process.cwd();

@@ -33,7 +33,7 @@ export class CommandCodeModelDiscoveryService {
       return { kind: 'skipped', reason: 'provider-disabled' };
     }
 
-    const command = this.plugin.getResolvedProviderCliPath('commandcode');
+    const command = await this.plugin.getResolvedProviderCliPath('commandcode');
     if (!command) {
       return { kind: 'completed', diagnostics: 'Command Code CLI was not found.', models: [] };
     }

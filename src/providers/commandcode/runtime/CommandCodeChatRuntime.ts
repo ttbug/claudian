@@ -93,7 +93,7 @@ export class CommandCodeChatRuntime implements ChatRuntime {
 
   async ensureReady(_options?: ChatRuntimeEnsureReadyOptions): Promise<boolean> {
     const enabled = getCommandCodeProviderSettings(this.plugin.settings).enabled;
-    const ready = enabled && Boolean(this.plugin.getResolvedProviderCliPath('commandcode'));
+    const ready = enabled && Boolean(await this.plugin.getResolvedProviderCliPath('commandcode'));
     this.setReady(ready);
     return ready;
   }
@@ -110,7 +110,7 @@ export class CommandCodeChatRuntime implements ChatRuntime {
     }
 
     const settings = this.getProviderSettings(queryOptions?.model);
-    const command = this.plugin.getResolvedProviderCliPath('commandcode')!;
+    const command = (await this.plugin.getResolvedProviderCliPath('commandcode'))!;
     const cwd = getVaultPath(this.plugin.app) ?? process.cwd();
     const launchSpec = buildCommandCodeLaunchSpec({
       command,

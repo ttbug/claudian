@@ -46,7 +46,7 @@ import { CommandCodeChatRuntime } from '@/providers/commandcode/runtime/CommandC
 function createPlugin(): any {
   return {
     app: { vault: { adapter: { basePath: '/vault' } } },
-    getResolvedProviderCliPath: jest.fn(() => '/bin/cmd'),
+    getResolvedProviderCliPath: jest.fn(async () => '/bin/cmd'),
     settings: {
       model: 'commandcode/gpt-5.6-sol',
       permissionMode: 'plan',
@@ -125,4 +125,3 @@ describe('CommandCodeChatRuntime', () => {
     await expect(iterator.next()).resolves.toEqual({ done: false, value: { type: 'done' } });
   });
 });
-
