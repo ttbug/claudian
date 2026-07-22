@@ -3,6 +3,7 @@ import { MarkdownRenderer } from 'obsidian';
 
 import { processFileLinks } from '../../../utils/fileLink';
 import { replaceImageEmbedsWithHtml } from '../../../utils/imageEmbed';
+import { normalizeLatexMathDelimiters } from '../../../utils/markdownMath';
 
 interface RenderInlineEditMarkdownPreviewOptions {
   app: App;
@@ -22,10 +23,7 @@ function emptyElement(container: HTMLElement): void {
 }
 
 function appendFallback(container: HTMLElement, markdown: string): void {
-  const fallback = container.ownerDocument.createElement('div');
-  fallback.className = 'claudian-inline-markdown-fallback';
-  fallback.textContent = markdown;
-  container.appendChild(fallback);
+  container.createDiv({ cls: 'claudian-inline-markdown-fallback', text: markdown });
 }
 
 export async function renderInlineEditMarkdownPreview({
@@ -39,7 +37,8 @@ export async function renderInlineEditMarkdownPreview({
   emptyElement(container);
 
   try {
-    const processedMarkdown = replaceImageEmbedsWithHtml(markdown, app, {
+    const normalizedMarkdown = normalizeLatexMathDelimiters(markdown);
+    const processedMarkdown = replaceImageEmbedsWithHtml(normalizedMarkdown, app, {
       mediaFolder,
       sourcePath,
     });

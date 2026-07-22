@@ -119,6 +119,7 @@ describe('types.ts', () => {
         savedProviderServiceTier: {},
         savedProviderThinkingBudget: {},
         savedProviderPermissionMode: {},
+        pendingProviderSessionInvalidations: {},
       };
 
       expect(settings.permissionMode).toBe('yolo');
@@ -171,6 +172,7 @@ describe('types.ts', () => {
         savedProviderServiceTier: {},
         savedProviderThinkingBudget: {},
         savedProviderPermissionMode: {},
+        pendingProviderSessionInvalidations: {},
       };
 
       expect(settings.model).toBe('anthropic/custom-model-v1');
@@ -224,6 +226,7 @@ describe('types.ts', () => {
         savedProviderServiceTier: {},
         savedProviderThinkingBudget: {},
         savedProviderPermissionMode: {},
+        pendingProviderSessionInvalidations: {},
       };
 
       expect(settings.lastClaudeModel).toBe('opus');
@@ -698,6 +701,11 @@ describe('types.ts', () => {
   });
 
   describe('supportsXHighEffort', () => {
+    it('returns true for opaque custom model ids', () => {
+      expect(supportsXHighEffort('custom-model')).toBe(true);
+      expect(supportsXHighEffort('gateway/gpt-4.2')).toBe(true);
+    });
+
     it('returns true for opus aliases and 4.7+ opus ids', () => {
       expect(supportsXHighEffort('opus')).toBe(true);
       expect(supportsXHighEffort('opus[1m]')).toBe(true);
@@ -732,6 +740,7 @@ describe('types.ts', () => {
     it('preserves supported effort levels', () => {
       expect(normalizeEffortLevel('claude-opus-4-7', 'xhigh')).toBe('xhigh');
       expect(normalizeEffortLevel('claude-sonnet-4-5', 'max')).toBe('max');
+      expect(normalizeEffortLevel('custom-model', 'xhigh')).toBe('xhigh');
     });
 
     it('clamps unsupported xhigh values to the model default', () => {
